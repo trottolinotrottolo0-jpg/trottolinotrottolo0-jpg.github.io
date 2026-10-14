@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://trottolinotrottolo0-jpg.github.io/sitemap.xml
