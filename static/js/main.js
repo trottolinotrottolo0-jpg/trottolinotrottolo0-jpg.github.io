@@ -85,4 +85,80 @@
       b.parentNode.replaceChild(f, b);
     });
   });
+  // Video in sovrimpressione: il player youtube-nocookie si carica solo al clic
+  var lastFocus = null;
+  function closeVideo() {
+    var m = document.querySelector(".vmodal");
+    if (!m) return;
+    m.parentNode.removeChild(m);
+    document.body.style.overflow = "";
+    if (lastFocus) lastFocus.focus();
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("[data-ytmodal]"), function (b) {
+    b.addEventListener("click", function () {
+      lastFocus = b;
+      var vert = b.hasAttribute("data-vertical");
+      var id = encodeURIComponent(b.getAttribute("data-ytmodal"));
+      var m = document.createElement("div");
+      m.className = "vmodal" + (vert ? " vmodal--v" : "");
+      m.setAttribute("role", "dialog");
+      m.setAttribute("aria-modal", "true");
+      m.setAttribute("aria-label", b.getAttribute("aria-label") || "Video");
+      m.innerHTML = '<div class="vmodal__box"><a class="vmodal__yt" href="https://www.youtube.com/watch?v=' + id +
+        '" target="_blank" rel="noopener">Apri su YouTube ↗</a><button class="vmodal__x" type="button" aria-label="Chiudi il video">×</button>' +
+        '<iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0" title="Video YouTube" ' +
+        'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>';
+      m.addEventListener("click", function (e) { if (e.target === m) closeVideo(); });
+      m.querySelector(".vmodal__x").addEventListener("click", closeVideo);
+      document.body.appendChild(m);
+      document.body.style.overflow = "hidden";
+      requestAnimationFrame(function () { m.classList.add("is-open"); });
+      m.querySelector(".vmodal__x").focus();
+    });
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeVideo(); });
+
+  // Animazioni allo scorrimento
+  if ("IntersectionObserver" in window && !reduce) {
+    var targets = document.querySelectorAll(".rows > .row, .rubsec, .vsec, .shop-sec, .about__sec, .faq, .related, .parere, .prose > h2, .prose > .table-wrap, .prose > figure, .doclist, .rgrid, .grid, .pgrid");
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add("is-in"); io.unobserve(en.target); }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+    Array.prototype.forEach.call(targets, function (el) {
+      var grid = el.matches(".rgrid, .grid, .pgrid, .doclist");
+      el.classList.add(grid ? "reveal-stagger" : "reveal");
+      if (grid) Array.prototype.forEach.call(el.children, function (c, i) { c.style.transitionDelay = Math.min(i, 10) * 60 + "ms"; });
+      io.observe(el);
+    });
+  }
+
+  // Pop-up merch: una volta per visita, dopo 25 secondi o a metà pagina
+  var pop = document.querySelector(".mpop");
+  if (pop && typeof pop.showModal === "function") {
+    var seen = false;
+    try { seen = sessionStorage.getItem("tw-mpop") === "1"; } catch (err) {}
+    var items = pop.querySelectorAll(".mpop__item");
+    if (items.length) items[Math.floor(Math.random() * items.length)].hidden = false;
+    var shown = false;
+    var show = function () {
+      if (shown || seen || document.querySelector(".vmodal") || document.querySelector("dialog[open]")) return;
+      shown = true;
+      try { sessionStorage.setItem("tw-mpop", "1"); } catch (err) {}
+      pop.showModal();
+    };
+    if (!seen) {
+      setTimeout(show, 25000);
+      window.addEventListener("scroll", function () {
+        var h = document.documentElement.scrollHeight - window.innerHeight;
+        if (h > 600 && window.scrollY / h > 0.55) show();
+      }, { passive: true });
+    }
+    pop.addEventListener("click", function (e) {
+      var r = pop.getBoundingClientRect();
+      var fuori = e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+      if ((e.target === pop && fuori) || e.target.hasAttribute("data-mpop-close")) pop.close();
+    });
+  }
 })();

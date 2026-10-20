@@ -524,3 +524,79 @@ a.social__item:hover { border-color: var(--red); }
 .doclist__d { color: #cfcfcf; font-size: 14px; line-height: 1.5; }
 .doclist__u { color: var(--muted); font-size: 12px; margin-top: auto; padding-top: 6px; }
 @media (max-width: 480px) { .prose table { font-size: 15px; } .prose th, .prose td { padding: 8px 10px; } }
+
+/* ---------- video YouTube (miniatura locale, player al clic) ---------- */
+.vcard__btn { display: block; width: 100%; padding: 0; border: 0; background: none; color: var(--white); text-align: left; cursor: pointer; }
+.vcard__media { position: relative; display: block; aspect-ratio: 16 / 9; overflow: hidden; border-radius: var(--radius); background: var(--bg-3); }
+.vcard__media img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease, filter .3s; }
+.vcard__media::after { content: ""; position: absolute; inset: 45% 0 0 0; background: linear-gradient(to top, rgba(0,0,0,.75), rgba(0,0,0,0)); pointer-events: none; }
+.vcard__play { position: absolute; left: 50%; top: 50%; z-index: 2; width: 54px; height: 54px; margin: -27px 0 0 -27px; border-radius: 50%;
+  background: rgba(225,6,0,.92); display: flex; align-items: center; justify-content: center; font-size: 20px; padding-left: 4px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.5); transition: transform .25s; }
+.vcard__dur { position: absolute; right: 8px; bottom: 8px; z-index: 2; background: rgba(0,0,0,.8); font-size: 12px; font-weight: 700; padding: 2px 6px; border-radius: 3px; }
+.vcard__title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 14px; font-weight: 600; line-height: 1.35; padding: 8px 2px 0; color: #e5e5e5; }
+.vcard__btn:hover .vcard__media img, .vcard__btn:focus-visible .vcard__media img { transform: scale(1.06); filter: brightness(1.1); }
+.vcard__btn:hover .vcard__play, .vcard__btn:focus-visible .vcard__play { transform: scale(1.15); }
+.vcard--v .vcard__media { aspect-ratio: 9 / 16; }
+.row--shorts .row__track > li { flex-basis: calc(var(--card-w) * .48); }
+@media (max-width: 599px) { .row--shorts .row__track > li { flex-basis: 40vw; } }
+.row--video .row__track { padding-bottom: 28px; }
+@media (hover: hover) and (min-width: 900px) { .row--video .row__track, .row--shorts .row__track { padding-bottom: 32px; margin-bottom: 0; } }
+.vsec { margin: 0 0 48px; scroll-margin-top: 90px; }
+.vsec__h { font-family: var(--display); font-weight: 400; font-size: clamp(32px, 3.6vw, 48px); line-height: 1; margin: 0 0 4px; }
+.vsec__d { color: var(--muted); margin: 0 0 18px; max-width: 720px; }
+.vsec__cta { margin: 8px 0 24px; }
+.vgrid { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px 14px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+.vgrid--v { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+@media (max-width: 480px) { .vgrid { grid-template-columns: 1fr 1fr; gap: 16px 10px; } .vcard__title { font-size: 13px; } .vcard__play { width: 42px; height: 42px; margin: -21px 0 0 -21px; font-size: 16px; } }
+
+/* player in sovrimpressione */
+.vmodal { position: fixed; inset: 0; z-index: 90; background: rgba(0,0,0,.88); display: flex; align-items: center; justify-content: center; padding: 56px 16px 24px;
+  opacity: 0; transition: opacity .25s; }
+.vmodal.is-open { opacity: 1; }
+.vmodal__box { width: min(1100px, 100%); position: relative; }
+.vmodal__box iframe { width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: var(--radius); background: #000; display: block; box-shadow: 0 20px 60px rgba(0,0,0,.6); }
+.vmodal--v .vmodal__box { width: min(420px, 100%, calc((100vh - 100px) * 9 / 16)); }
+.vmodal--v .vmodal__box iframe { aspect-ratio: 9 / 16; }
+.vmodal__x { position: absolute; top: -48px; right: 0; width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(255,255,255,.12); color: #fff; font-size: 28px; cursor: pointer; }
+.vmodal__x:hover { background: rgba(255,255,255,.25); }
+.vmodal__yt { position: absolute; left: 0; top: -40px; font-size: 14px; color: #ddd; }
+
+/* ---------- rubriche in home ---------- */
+.rubsec { margin: 8px 0 34px; }
+.rgrid--home { padding: 14px var(--gutter) 0; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); }
+.rgrid--home .rtile a { min-height: 150px; }
+.rgrid--home .rtile__name { font-size: 30px; }
+@media (min-width: 1300px) { .rgrid--home { grid-template-columns: repeat(5, 1fr); } }
+
+/* ---------- pop-up merch ---------- */
+.mpop { width: min(440px, calc(100vw - 32px)); padding: 24px; border: 1px solid #333; border-radius: 10px; color: var(--white);
+  background: radial-gradient(120% 80% at 100% 0%, rgba(225,6,0,.45), rgba(225,6,0,0) 60%), #161616; box-shadow: 0 30px 80px rgba(0,0,0,.7); }
+.mpop::backdrop { background: rgba(0,0,0,.6); }
+.mpop[open] { animation: mpop-in .45s cubic-bezier(.2,.9,.3,1.2); }
+@keyframes mpop-in { from { opacity: 0; transform: translateY(30px) scale(.94); } to { opacity: 1; transform: none; } }
+.mpop__x { position: absolute; top: 10px; right: 10px; width: 40px; height: 40px; border: 0; border-radius: 50%; background: rgba(255,255,255,.1); color: #fff; font-size: 24px; cursor: pointer; }
+.mpop__kicker { margin: 0; color: var(--red); font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+.mpop__h { font-family: var(--display); font-weight: 400; font-size: 40px; line-height: 1; margin: 4px 0 16px; }
+.mpop__item { display: grid; grid-template-columns: 150px 1fr; gap: 16px; align-items: center; }
+.mpop__item[hidden] { display: none; }
+.mpop__item img { width: 150px; height: 150px; object-fit: cover; border-radius: 8px; background: #fff; }
+.mpop__name { margin: 0 0 4px; font-weight: 700; line-height: 1.3; }
+.mpop__price { margin: 0 0 12px; font-family: var(--display); font-size: 32px; line-height: 1; }
+.mpop__all { display: inline-block; margin-top: 16px; font-size: 14px; color: #e5e5e5; }
+@media (max-width: 420px) { .mpop__item { grid-template-columns: 110px 1fr; } .mpop__item img { width: 110px; height: 110px; } .mpop__h { font-size: 34px; } }
+
+/* ---------- animazioni allo scorrimento ---------- */
+.js .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
+.js .reveal.is-in { opacity: 1; transform: none; }
+.js .reveal-stagger > * { opacity: 0; transform: translateY(18px); transition: opacity .5s ease, transform .5s ease; }
+.js .reveal-stagger.is-in > * { opacity: 1; transform: none; }
+.billboard__img { animation: kenburns 18s ease-out both; }
+@keyframes kenburns { from { transform: scale(1.08); } to { transform: scale(1); } }
+.billboard__content > * { animation: rise .8s cubic-bezier(.2,.7,.2,1) both; }
+.billboard__content > *:nth-child(2) { animation-delay: .12s; } .billboard__content > *:nth-child(3) { animation-delay: .24s; } .billboard__content > *:nth-child(4) { animation-delay: .36s; }
+@keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal, .js .reveal-stagger > * { opacity: 1 !important; transform: none !important; }
+  .billboard__img, .billboard__content > *, .mpop[open] { animation: none !important; }
+}
