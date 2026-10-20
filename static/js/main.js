@@ -161,4 +161,69 @@
       if ((e.target === pop && fuori) || e.target.hasAttribute("data-mpop-close")) pop.close();
     });
   }
+  // Pagina prodotto: scelta colore e taglia -> link Stripe della variante giusta
+  var pick = document.querySelector(".pick[data-varianti]");
+  if (pick) {
+    var vars = JSON.parse(pick.getAttribute("data-varianti"));
+    var img = document.getElementById("pdp-img"), price = document.getElementById("pdp-price");
+    var buy = document.getElementById("pdp-buy"), note = document.getElementById("pdp-note");
+    var lc = document.getElementById("pdp-color"), ls = document.getElementById("pdp-size");
+    var colorBtns = pick.querySelectorAll("[data-color]"), sizeBtns = pick.querySelectorAll("[data-size]");
+    var color = colorBtns.length ? colorBtns[0].getAttribute("data-color") : "", size = "";
+    function find() {
+      for (var i = 0; i < vars.length; i++) if (vars[i].c === color && (vars[i].t || "") === size) return vars[i];
+      return null;
+    }
+    function refresh() {
+      Array.prototype.forEach.call(sizeBtns, function (b) {
+        var t = b.getAttribute("data-size"), ok = vars.some(function (v) { return v.c === color && v.t === t; });
+        b.disabled = !ok;
+        if (!ok && size === t) size = "";
+        b.setAttribute("aria-pressed", String(t === size));
+      });
+      if (ls) ls.textContent = size || "scegli";
+      var v = (size || !sizeBtns.length) ? find() : null;
+      if (v) {
+        price.textContent = v.p; buy.href = v.u; buy.removeAttribute("aria-disabled");
+        buy.textContent = "Compra ora · " + v.p; note.textContent = color + (size ? " / " + size : "") + ": paghi in sicurezza su Stripe.";
+      } else {
+        buy.href = "#"; buy.setAttribute("aria-disabled", "true"); buy.textContent = "Scegli la taglia";
+        note.textContent = "Scegli colore e taglia, poi paghi su Stripe.";
+      }
+    }
+    Array.prototype.forEach.call(colorBtns, function (b) {
+      b.addEventListener("click", function () {
+        color = b.getAttribute("data-color");
+        Array.prototype.forEach.call(colorBtns, function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+        if (lc) lc.textContent = color;
+        if (img && img.getAttribute("src") !== b.getAttribute("data-img")) {
+          img.classList.add("is-loading");
+          img.onload = function () { img.classList.remove("is-loading"); };
+          img.src = b.getAttribute("data-img");
+        }
+        refresh();
+      });
+    });
+    Array.prototype.forEach.call(sizeBtns, function (b) {
+      b.addEventListener("click", function () { size = b.getAttribute("data-size"); refresh(); });
+    });
+    buy.addEventListener("click", function (e) {
+      if (buy.getAttribute("aria-disabled") === "true") { e.preventDefault(); note.textContent = "Prima scegli la taglia."; }
+    });
+    refresh();
+  }
+  // Shorts: anteprime mute che partono da sole quando sono sullo schermo
+  var clips = document.querySelectorAll("video.vcard__clip[data-src]");
+  if (clips.length && "IntersectionObserver" in window && !reduce) {
+    var vio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        var v = en.target;
+        if (en.isIntersecting) {
+          if (!v.src) v.src = v.getAttribute("data-src");
+          var pr = v.play(); if (pr && pr.catch) pr.catch(function () {});
+        } else if (!v.paused) v.pause();
+      });
+    }, { threshold: 0.6 });
+    Array.prototype.forEach.call(clips, function (v) { vio.observe(v); });
+  }
 })();
