@@ -645,3 +645,24 @@ a.social__item:hover { border-color: var(--red); }
 .video__btn:hover .video__cover { transform: scale(1.03); filter: brightness(1.08); }
 .video__btn:hover .video__play { transform: translate(-50%, -50%) scale(1.1); }
 .video__play { transition: transform .25s; box-shadow: 0 8px 26px rgba(0,0,0,.55); }
+
+/* ---------- seguimi + newsletter ---------- */
+.follow { margin: 8px 0 40px; }
+.follow__grid { list-style: none; margin: 0; padding: 14px var(--gutter) 0; display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); }
+.follow__card { display: flex; flex-direction: column; gap: 6px; height: 100%; padding: 22px 20px; border-radius: 10px; text-decoration: none; color: #fff; transition: transform .25s; border: 1px solid #2c2c2c; }
+.follow__card:hover { transform: translateY(-4px); }
+.follow__card .btn { align-self: flex-start; margin-top: 10px; }
+.follow__card--youtube { background: radial-gradient(120% 100% at 100% 0%, rgba(255,0,0,.5), rgba(255,0,0,0) 60%), #161616; }
+.follow__card--tiktok { background: radial-gradient(120% 100% at 100% 0%, rgba(37,244,238,.35), rgba(254,44,85,.25) 45%, rgba(0,0,0,0) 70%), #121212; }
+.follow__card--instagram { background: radial-gradient(120% 100% at 100% 0%, rgba(253,29,29,.4), rgba(131,58,180,.35) 45%, rgba(0,0,0,0) 75%), #161616; }
+.follow__net { font-family: var(--display); font-size: 40px; line-height: 1; }
+.follow__handle { font-weight: 700; }
+.follow__desc { color: #d6d6d6; font-size: 15px; flex: 1; }
+.nl { margin: 18px var(--gutter) 0; padding: clamp(20px, 4vw, 36px); border-radius: 10px; background: radial-gradient(90% 120% at 100% 0%, rgba(225,6,0,.4), rgba(225,6,0,0) 60%), var(--bg-2); border: 1px solid #2c2c2c; max-width: 900px; }
+.nl__h { font-family: var(--display); font-weight: 400; font-size: clamp(32px, 4vw, 46px); line-height: 1; margin: 0 0 8px; }
+.nl__p { color: #d6d6d6; margin: 0 0 16px; max-width: 60ch; }
+.nl__form { display: flex; flex-wrap: wrap; gap: 10px; }
+.nl__input { flex: 1 1 240px; min-width: 0; font: inherit; font-size: 17px; color: #fff; background: #0f0f0f; border: 1px solid #4d4d4d; border-radius: var(--radius); padding: 12px 14px; }
+.nl__input:focus { outline: 2px solid var(--red); border-color: transparent; }
+.nl__small { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
+.nl__small a { color: #fff; }
