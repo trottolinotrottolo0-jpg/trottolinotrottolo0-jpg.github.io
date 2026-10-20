@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://trottolinotrottolo0-jpg.github.io/sitemap.xml
+Sitemap: https://www.tonywrestling.it/sitemap.xml
