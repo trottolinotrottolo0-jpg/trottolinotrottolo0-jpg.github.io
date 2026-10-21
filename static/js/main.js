@@ -196,6 +196,13 @@
         color = b.getAttribute("data-color");
         Array.prototype.forEach.call(colorBtns, function (x) { x.setAttribute("aria-pressed", String(x === b)); });
         if (lc) lc.textContent = color;
+        var th = document.getElementById("pdp-thumbs"), foto = [];
+        try { foto = JSON.parse(b.getAttribute("data-foto") || "[]"); } catch (err) {}
+        if (th) {
+          th.innerHTML = foto.length > 1 ? foto.map(function (u, i) {
+            return '<button class="pdp__thumb" type="button" data-src="' + u + '" aria-label="Foto ' + (i + 1) + '" aria-pressed="' + (i === 0) + '"><img src="' + u + '" alt="" loading="lazy" decoding="async"></button>';
+          }).join("") : "";
+        }
         if (img && img.getAttribute("src") !== b.getAttribute("data-img")) {
           img.classList.add("is-loading");
           img.onload = function () { img.classList.remove("is-loading"); };
@@ -206,6 +213,12 @@
     });
     Array.prototype.forEach.call(sizeBtns, function (b) {
       b.addEventListener("click", function () { size = b.getAttribute("data-size"); refresh(); });
+    });
+    var thb = document.getElementById("pdp-thumbs");
+    if (thb) thb.addEventListener("click", function (e) {
+      var t = e.target.closest(".pdp__thumb"); if (!t) return;
+      Array.prototype.forEach.call(thb.children, function (x) { x.setAttribute("aria-pressed", String(x === t)); });
+      img.src = t.getAttribute("data-src");
     });
     buy.addEventListener("click", function (e) {
       if (buy.getAttribute("aria-disabled") === "true") { e.preventDefault(); note.textContent = "Prima scegli la taglia."; }
@@ -226,4 +239,35 @@
     }, { threshold: 0.6 });
     Array.prototype.forEach.call(clips, function (v) { vio.observe(v); });
   }
+  // Griglie filtrabili (articoli, rubriche): cerca nel testo + federazione + rubrica, "Mostra altri"
+  Array.prototype.forEach.call(document.querySelectorAll(".filters"), function (box) {
+    var grid = box.nextElementSibling, more = grid.nextElementSibling.querySelector("button"), empty = grid.nextElementSibling.nextElementSibling;
+    var items = Array.prototype.slice.call(grid.children), input = box.querySelector("input"), count = box.querySelector(".filters__count");
+    var state = { fed: "", rub: "" }, shown = 24, label = box.getAttribute("data-label") || "articoli";
+    function norm(s) { return (s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, ""); }
+    function apply() {
+      var terms = norm(input.value.trim()).split(/\s+/).filter(Boolean), ok = [];
+      items.forEach(function (li) {
+        var t = norm(li.getAttribute("data-txt"));
+        var m = (!state.fed || li.getAttribute("data-fed") === state.fed) && (!state.rub || li.getAttribute("data-rub") === state.rub) &&
+                terms.every(function (w) { return t.indexOf(w) >= 0; });
+        if (m) ok.push(li);
+        li.hidden = true;
+      });
+      ok.forEach(function (li, i) { li.hidden = i >= shown; });
+      more.hidden = ok.length <= shown;
+      empty.hidden = ok.length > 0;
+      count.textContent = ok.length + " " + label;
+    }
+    box.addEventListener("click", function (e) {
+      var b = e.target.closest(".fchip"); if (!b) return;
+      var f = b.getAttribute("data-f");
+      state[f] = b.getAttribute("data-v"); shown = 24;
+      Array.prototype.forEach.call(box.querySelectorAll('.fchip[data-f="' + f + '"]'), function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+      apply();
+    });
+    input.addEventListener("input", function () { shown = 24; apply(); });
+    more.addEventListener("click", function () { shown += 24; apply(); });
+    apply();
+  });
 })();
